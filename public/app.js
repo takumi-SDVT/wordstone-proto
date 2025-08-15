@@ -1,4 +1,6 @@
 // 単語帳データの置き場
+const API_BASE = window.location.href.includes('vercel.app') ? 'https://wordbook-ai.vercel.app' : 'http://localhost:5173';
+
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/service-worker.js')
