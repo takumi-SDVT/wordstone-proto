@@ -1,0 +1,399 @@
+:root {
+      --bg: #0b1020;
+      --card: #111827;
+      --text: #e5e7eb;
+      --border: #1f2937;
+      --accent: #22c55e;
+      --muted: #94a3b8;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }
+    .container { max-width: 720px; margin: 0 auto; padding: 16px; }
+    h1 { font-size: 24px; font-weight: 700; margin-bottom: 16px; }
+    .form { display: grid; gap: 12px; margin-bottom: 24px; }
+    label { font-size: 14px; color: var(--muted); margin-bottom: 4px; }
+    input, select { 
+      width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); 
+      background: var(--card); color: var(--text); font-size: 16px; outline: none; 
+    }
+    button { 
+      padding: 10px; border-radius: 8px; border: none; background: var(--accent); 
+      color: #052812; font-weight: 700; cursor: pointer; 
+    }
+    button:hover { background: #16a34a; }
+    .result { margin-top: 24px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); }
+    th { background: var(--card); font-weight: 700; }
+    td { background: var(--bg); }
+    .toast { 
+      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); 
+      background: var(--card); color: var(--text); padding: 8px 16px; 
+      border-radius: 8px; display: none; 
+    }
+    .toast.show { display: block; }
+    .overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.45); display: none; z-index: 40;
+    }
+    .sheet {
+      position: fixed; left: 0; right: 0; bottom: -100%; z-index: 50; margin: 0 auto; max-width: 720px;
+      background: var(--card); border: 1px solid var(--border); border-radius: 16px 16px 0 0; padding: 16px;
+      transition: transform .25s ease; transform: translateY(100%);
+    }
+    .sheet.open { transform: translateY(0); bottom: 0; }
+    .overlay.open { display: block; }
+    .grab { width: 48px; height: 6px; background: #334155; border-radius: 999px; margin: 6px auto 10px; }
+    .sheet-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .slider-container { display: flex; align-items: center; gap: 10px; }
+    #count-value { font-size: 16px; color: var(--text); }
+    .custom-input { margin-top: 8px; }
+    .header {
+      background: var(--card);
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header .title {
+      font-size: 20px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .header .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 8px;
+      background: var(--accent);
+      color: #052812;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .header .btn:hover {
+      background: #16a34a;
+    }
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin: 24px 0 12px;
+    }
+    .list {
+      background: var(--card);
+      border-radius: 8px;
+      padding: 12px;
+      display: grid;
+      gap: 8px;
+    }
+    .item {
+      padding: 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .item:hover { background:#0e1426; }
+    .item-title { font-weight:700; }
+    .item-meta { color:var(--muted); font-size:12px; margin-top:4px; }
+    [hidden] { display:none !important; }
+    .btn-danger { background: linear-gradient(180deg,#ef4444,#dc2626); border: none; color:#fff; font-weight:700; }
+    .card input { width:100%; padding:8px; border-radius:8px; border:1px solid var(--border); background:#0b1020; color:#fff; font-size:14px; }
+    .preview-card { position: relative; width: 100%; max-width: 600px; min-height: 300px; margin: 0 auto; padding: 20px; background: #0b1020; border: 1px solid var(--border); border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,.3); transition: transform 0.3s ease; }
+    .card-face { font-size: 18px; text-align: center; min-height: 250px; display: flex; align-items: center; justify-content: center; transition: transform 0.3s ease; }
+    .card-face.front { font-weight: 700; }
+    .card-face.back { color: #cbd5e1; }
+    .card-face.extra { color: #94a3b8; }
+    .card-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .prev-card, .next-card { padding: 8px 16px; }
+    .preview-card button { font-size: 14px; }
+    .study-btn { width: 100%; padding: 12px; font-size: 16px; }
+    @media (max-width: 600px) { 
+      .study-btn { font-size: 14px; padding: 10px; }
+      .preview-card { max-width: 95%; min-height: 150px; }
+    }
+    .study-view { width: 100%; max-width: 600px; margin: 0 auto; padding: 20px; }
+    .know-btn { background: linear-gradient(180deg,#22c55e,#16a34a); }
+    .dont-know-btn { background: linear-gradient(180deg,#ef4444,#dc2626); }
+    .exit-btn { background: #0f172a; }
+    .recipe-input { width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border); background: #0b1020; color: #fff; font-size: 14px; margin-bottom: 8px; }
+    .title-input { width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border); background: #0b1020; color: #fff; font-size: 18px; font-weight: 700; margin-bottom: 12px; }
+    /* --- スライダーCSSここから --- */
+    .card-slider-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-top: 10px;
+    }
+    .card-slider {
+      width: 100%;
+      max-width: 400px;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 8px;
+      background: var(--border);
+      border-radius: 4px;
+      outline: none;
+    }
+    .card-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      background: var(--accent);
+      border-radius: 50%;
+      cursor: pointer;
+    }
+    .card-slider::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      background: var(--accent);
+      border-radius: 50%;
+      cursor: pointer;
+    }
+    .card-slider-value {
+      font-size: 14px;
+      color: var(--text);
+      margin-top: 8px;
+    }
+    @media (max-width: 600px) {
+      .card-slider {
+        width: 90%;
+      }
+    }
+    /* --- スライダーCSSここまで --- */
+    .edit-field-container {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: flex-start;
+    }
+    .edit-field-container input {
+      width: 100%;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #0b1020;
+      color: #fff;
+      font-size: 14px;
+    }
+    .edit-field-container textarea {
+      width: 100%;
+      min-height: 80px;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #0b1020;
+      color: #fff;
+      font-size: 14px;
+      resize: vertical;
+      font-family: inherit;
+    }
+    .edit-field-container button {
+      width: 100%;
+      padding: 6px;
+      font-size: 12px;
+      background: var(--accent);
+      border-radius: 8px;
+      border: none;
+      color: #052812;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .edit-field-container button:hover {
+      background: #16a34a;
+    }
+    .edit-field-container .delete-btn-card {
+      background: linear-gradient(180deg, #ef4444, #dc2626);
+      color: #fff;
+    }
+    .edit-field-container .delete-btn-card:hover {
+      background: linear-gradient(180deg, #f87171, #ef4444);
+    }
+    @media (max-width: 600px) {
+      .edit-field-container input,
+      .edit-field-container textarea {
+        font-size: 12px;
+      }
+      .edit-field-container button {
+        font-size: 10px;
+        padding: 4px;
+      }
+    }
+    /* --- ボトムナビ追加 --- */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 8px 0;
+      z-index: 50;
+    }
+    .bottom-nav button {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .bottom-nav button.active {
+      color: var(--accent);
+    }
+    .bottom-nav button:hover {
+      color: var(--accent);
+    }
+    @media (max-width: 600px) {
+      .bottom-nav button {
+        font-size: 12px;
+      }
+    }
+    /* フォルダリスト用スタイル */
+    .folder-list {
+      background: var(--card);
+      border-radius: 8px;
+      padding: 12px;
+      display: grid;
+      gap: 8px;
+    }
+    .folder-item {
+      padding: 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .folder-item:hover {
+      background: #0e1426;
+    }
+    .folder-item.selected {
+      background: #1a2338; /* 選択中のフォルダを強調 */
+    }
+    .folder-item-title {
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .folder-item input.folder-name-input {
+      width: 100%;
+      padding: 6px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .folder-item .btn-edit-folder {
+      background: var(--accent);
+      color: #052812;
+      font-size: 12px;
+      padding: 6px 12px;
+    }
+    .folder-item .btn-edit-folder:hover {
+      background: #16a34a;
+    }
+    .folder-item .btn-danger {
+      font-size: 12px;
+      padding: 6px 12px;
+    }
+    .deck-list {
+      background: var(--card);
+      border-radius: 8px;
+      padding: 12px;
+      display: grid;
+      gap: 8px;
+    }
+    .deck-item {
+      padding: 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .deck-item:hover {
+      background: #0e1426;
+    }
+    .deck-item-title {
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .deck-item-meta {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 4px;
+    }
+    .btn-move-up, .btn-move-down {
+      background: var(--accent);
+      color: #052812;
+      font-size: 12px;
+      padding: 6px 12px;
+      border-radius: 8px;
+    }
+    .btn-move-up:hover, .btn-move-down:hover {
+      background: #16a34a;
+    }
+    .btn-move-up:disabled, .btn-move-down:disabled {
+      background: var(--border);
+      color: var(--muted);
+      cursor: not-allowed;
+    }
+    /* --- ここから追加 --- */
+    .folder-detail-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin: 24px 0 12px;
+    }
+    /* --- ここまで追加 --- */
+    /* --- ここから追加 --- */
+    .sheet .folder-select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      font-size: 16px;
+    }
+    .sheet .no-folders {
+      color: var(--muted);
+      font-size: 14px;
+      text-align: center;
+      margin: 12px 0;
+    }
+    /* --- ここまで追加 --- */
+    /* 検索欄スタイル追加 */
+    .search-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .search-input {
+      width: 100%;
+      max-width: 300px;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      font-size: 14px;
+    }
+    @media (max-width: 600px) {
+      .search-input {
+        max-width: 200px;
+        font-size: 12px;
+      }
+    }
