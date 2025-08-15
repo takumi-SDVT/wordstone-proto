@@ -831,3 +831,16 @@ async function regenDeck({ topic, backKind, extraKind, request, front, target, b
     throw e;
   }
 }
+
+function showToast(message) {
+  const toast = document.getElementById('toast');
+  if (toast) {
+    toast.textContent = message;
+    toast.classList.add('show');
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 3000); // 3秒後に消える
+  } else {
+    console.warn('Toast element not found:', message);
+  }
+}
