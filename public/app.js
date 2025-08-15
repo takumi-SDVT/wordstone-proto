@@ -770,6 +770,7 @@ async function generateDeck() {
   const request = document.getElementById('request').value.trim();
   const count = parseInt(document.getElementById('count').value) || 5;
 
+  console.log("Request body:", { topic, backKind, extraKind, request, count }); // デバッグ
   if (!topic) {
     showToast('お題を入力してください');
     return;
@@ -809,7 +810,7 @@ async function generateDeck() {
     go(`#/deck/${deckId}`);
     closeModal();
   } catch (e) {
-    console.error('Generate failed:', e);
+    console.error("Fetch error:", e);
     showToast('生成に失敗しました: ' + (navigator.onLine ? String(e) : 'オフラインです'));
   }
 }
