@@ -2,10 +2,11 @@ const CACHE_NAME = 'wordbook-ai-v1';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
-  '/styles.css', // 追加
-  '/app.js',     // 追加
+  '/styles.css',
+  '/app.js',
   '/assets/icons/icon-192.png',
-  '/assets/icons/icon-512.png'
+  '/assets/icons/icon-512.png',
+  '/manifest.json' // PWA用に追加推奨
 ];
 
 self.addEventListener('install', event => {
@@ -14,7 +15,7 @@ self.addEventListener('install', event => {
       return cache.addAll(ASSETS_TO_CACHE);
     })
   );
-  self.skipWaiting();
+  self.skipWaiting(); // 即時有効化
 });
 
 self.addEventListener('activate', event => {
@@ -25,13 +26,23 @@ self.addEventListener('activate', event => {
       );
     })
   );
-  self.clients.claim();
+  self.clients.claim(); // 即時制御
 });
 
+// フェッチ処理
 self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request).then(cachedResponse => {
-      return cachedResponse || fetch(event.request);
+      return cachedResponse || fetch(event.request).then(response => {
+        // レスポンスをキャッシュ（GETリクエストのみ）
+        if (event.request.method === 'GET') {
+          return caches.open(CACHE_NAME).then(cache => {
+            cache.put(event.request, response.clone());
+            return response;
+          });
+        }
+        return response;
+      });
     })
   );
 });
