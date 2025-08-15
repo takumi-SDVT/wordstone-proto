@@ -1,7 +1,7 @@
-// API_BASEをコードの先頭に移動
-const API_BASE = typeof process !== 'undefined' && process.env && process.env.NODE_ENV === 'production'
-  ? 'https://wordbook-ai.vercel.app'
-  : 'http://localhost:5173';
+// API_BASEをlocation.hostnameで判定するように変更
+const API_BASE = location.hostname === 'localhost'
+  ? 'http://localhost:5173'
+  : 'https://wordbook-ai.vercel.app';
 
 // 単語帳データの置き場
 
