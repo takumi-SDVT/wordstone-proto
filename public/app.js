@@ -744,6 +744,10 @@ if ('serviceWorker' in navigator) {
       lockScroll(false);
     }
 
+    const API_BASE = typeof process !== 'undefined' && process.env && process.env.NODE_ENV === 'production'
+      ? 'https://wordbook-ai.vercel.app'
+      : 'http://localhost:5173';
+
     async function generateDeck() {
       const topic = document.getElementById('topic').value.trim();
       const backKindValue = document.getElementById('backKind').value.trim();
@@ -764,9 +768,14 @@ if ('serviceWorker' in navigator) {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ topic, backKind, extraKind, request, count })
         });
-        if (!res.ok) throw new Error(`API error: ${res.status}`);
+        if (!res.ok) {
+          if (navigator.onLine === false) {
+            showToast('オフラインです。既存の単語帳をご利用ください。');
+            return;
+          }
+          throw new Error(`API error: ${res.status}`);
+        }
         const { cards, error } = await res.json();
-        console.log('Generate response (client):', { cards, error });
         if (error) throw new Error(error);
         if (!cards || !Array.isArray(cards) || cards.length === 0) {
           showToast('生成された単語がありません');
