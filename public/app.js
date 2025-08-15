@@ -759,7 +759,7 @@ if ('serviceWorker' in navigator) {
       }
 
       try {
-        const res = await fetch('/api/generate', {
+        const res = await fetch(`${API_BASE}/api/generate`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ topic, backKind, extraKind, request, count })
@@ -788,7 +788,26 @@ if ('serviceWorker' in navigator) {
         closeModal();
       } catch (e) {
         console.error('Generate failed:', e);
-        showToast('生成に失敗しました: ' + String(e));
+        showToast('生成に失敗しました: ' + (navigator.onLine ? String(e) : 'オフラインです'));
+      }
+    }
+
+    // regenDeck関数を追加しAPI_BASE利用＆オフライン判定
+    async function regenDeck({ topic, backKind, extraKind, request, front, target, back, extra, existingTerms }) {
+      try {
+        const res = await fetch(`${API_BASE}/api/regen`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ topic, backKind, extraKind, request, front, target, back, extra, existingTerms })
+        });
+        if (!res.ok) throw new Error(`API error: ${res.status}`);
+        const { card, error } = await res.json();
+        if (error) throw new Error(error);
+        return card;
+      } catch (e) {
+        console.error('Regen failed:', e);
+        showToast('再生成に失敗しました: ' + (navigator.onLine ? String(e) : 'オフラインです'));
+        throw e;
       }
     }
 
