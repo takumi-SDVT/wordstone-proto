@@ -687,6 +687,17 @@ function setActiveNav(page) {
 
 window.addEventListener('hashchange', route);
 
+// スクロールをロック/解除するシンプルな関数
+function lockScroll(lock) {
+  if (lock) {
+    document.body.style.overflow = 'hidden';
+    document.body.style.touchAction = 'none';
+  } else {
+    document.body.style.overflow = '';
+    document.body.style.touchAction = '';
+  }
+}
+
 // ユーティリティ
 function uid() { return Math.random().toString(36).slice(2) + Date.now().toString(36); }
 function escapeHTML(s) { return String(s ?? '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', '\'': '&#39;' })[m]); }
