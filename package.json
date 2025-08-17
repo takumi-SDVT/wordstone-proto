@@ -1,5 +1,5 @@
 {
-  "name": "wordbook-proto",
+  "name": "wordstone-proto",
   "version": "1.0.0",
   "main": "server.js",
   "type": "module",
