@@ -1,6 +1,6 @@
 {
-  "name": "単語帳AI",
-  "short_name": "単語帳",
+  "name": "WordStone",
+  "short_name": "WordStone",
   "start_url": "/index.html",
   "display": "standalone",
   "background_color": "#0b1020",
