@@ -1,146 +1,122 @@
+<!--index.html-->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>単語帳AI</title>
-  <style>
-    :root {
-      --bg: #0b1020;
-      --card: #111827;
-      --text: #e5e7eb;
-      --border: #1f2937;
-      --accent: #22c55e;
-      --muted: #94a3b8;
-    }
-    * { box-sizing: border-box; }
-    body { margin: 0; background: var(--bg); color: var(--text); font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }
-    .container { max-width: 720px; margin: 0 auto; padding: 16px; }
-    h1 { font-size: 24px; font-weight: 700; margin-bottom: 16px; }
-    .form { display: grid; gap: 12px; margin-bottom: 24px; }
-    label { font-size: 14px; color: var(--muted); margin-bottom: 4px; }
-    input, select { 
-      width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); 
-      background: var(--card); color: var(--text); font-size: 16px; outline: none; 
-    }
-    button { 
-      padding: 10px; border-radius: 8px; border: none; background: var(--accent); 
-      color: #052812; font-weight: 700; cursor: pointer; 
-    }
-    button:hover { background: #16a34a; }
-    .result { margin-top: 24px; }
-    table { width: 100%; border-collapse: collapse; }
-    th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); }
-    th { background: var(--card); font-weight: 700; }
-    td { background: var(--bg); }
-    .toast { 
-      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); 
-      background: var(--card); color: var(--text); padding: 8px 16px; 
-      border-radius: 8px; display: none; 
-    }
-    .toast.show { display: block; }
-  </style>
+  <title>WordStone</title>
+  <link rel="manifest" href="/manifest.json">
+  <!-- iOSサポート -->
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  <meta name="apple-mobile-web-app-status-bar" content="#22c55e">
+  <meta name="theme-color" content="#22c55e">
+  <link rel="stylesheet" href="/styles.css"> <!-- 追加 -->
 </head>
 <body>
+  <div class="header">
+    <div class="header-inner">
+      <div class="title" onclick="go('#/home')">📘 WordStone</div>
+      <!-- <button onclick="openModal()" class="btn btn-primary">＋ 生成</button> 削除 -->
+    </div>
+  </div>
   <div class="container">
-    <h1>単語帳AI</h1>
-    <div class="form">
+    <main id="homeView">
+      <div class="search-container">
+        <h2 class="section-title">🗂 最近使った単語帳</h2>
+        <input type="text" id="searchInput" class="search-input" placeholder="単語帳を検索">
+      </div>
+      <div id="history" class="list"></div>
+    </main>
+    <main id="deckView" hidden>
+      <h2 class="section-title" style="margin-top:18px;">📄 単語帳詳細</h2>
+      <div id="detail" class="card muted"></div>
+    </main>
+    <main id="studyView" hidden>
+      <h2 class="section-title" style="margin-top:18px;">📚 暗記モード</h2>
+      <div id="study" class="study-view"></div>
+    </main>
+    <main id="folderView" hidden>
+      <h2 class="section-title">🗂 フォルダ管理</h2>
+      <div style="margin-bottom: 16px; display: flex; gap: 8px;">
+        <button class="btn btn-primary new-folder-btn">＋ 新規フォルダ</button>
+        <button class="btn btn-primary back-to-folders-btn" style="display: none;">フォルダ一覧に戻る</button>
+      </div>
+      <div id="folderList" class="folder-list"></div>
+      <div id="deckList" class="deck-list" style="display: none;"></div>
+    </main>
+    <main id="folderDetailView" hidden>
+      <h2 class="section-title" id="folderDetailTitle"></h2>
+      <div style="margin-bottom: 16px;">
+        <button class="btn btn-primary add-deck-btn">履歴から追加</button>
+      </div>
+      <div id="folderDeckList" class="folder-list">
+        <p class="muted">単語帳がありません</p>
+      </div>
+    </main>
+    <div class="overlay" id="overlay"></div>
+    <div class="toast" id="toast"></div>
+  </div>
+  <div class="bottom-nav" id="bottomNav" hidden>
+    <button onclick="go('#/home')" data-page="home">履歴</button>
+    <button onclick="openModal()" data-page="generate">生成</button>
+    <button onclick="go('#/folders')" data-page="folders">フォルダ</button>
+  </div>
+  <!-- モーダル（sheet）はボトムナビの後ろに移動 -->
+  <div class="sheet" id="sheet">
+    <div class="grab"></div>
+    <div class="form" id="generateForm">
       <div>
         <label>お題</label>
         <input type="text" id="topic" placeholder="例：にじさんじライバー、古文単語">
       </div>
       <div>
         <label>説明（裏面）</label>
-        <input type="text" id="backKind" placeholder="例：特徴、意味">
+        <select id="backKind">
+          <option value="任意" selected>任意</option>
+          <option value="意味">意味</option>
+          <option value="解法">解法</option>
+          <option value="公式">公式</option>
+          <option value="訳">訳</option>
+        </select>
+        <input type="text" id="backKind-custom" class="custom-input" placeholder="例：特徴、プロフィール" style="display: block;">
       </div>
       <div>
         <label>補足</label>
-        <input type="text" id="extraKind" placeholder="例：エピソード、例文">
+        <select id="extraKind">
+          <option value="任意" selected>任意</option>
+          <option value="例文">例文</option>
+          <option value="証明">証明</option>
+          <option value="ゴロ合わせ">ゴロ合わせ</option>
+          <option value="背景">背景</option>
+        </select>
+        <input type="text" id="extraKind-custom" class="custom-input" placeholder="例：エピソード、補足情報" style="display: block;">
       </div>
       <div>
-        <label>難易度</label>
-        <input type="text" id="difficulty" placeholder="例：初心者向け、難関大レベル">
+        <label>要望</label>
+        <input type="text" id="request" placeholder="例：初心者向け、簡潔に">
       </div>
-      <div>
+      <div class="slider-container">
         <label>単語数</label>
-        <input type="number" id="count" value="5" min="1" max="10">
+        <input type="range" id="count" min="1" max="10" value="5">
+        <span id="count-value">5</span>
       </div>
-      <button onclick="generateDeck()">生成する</button>
+      <div class="sheet-actions">
+        <button onclick="closeModal()">キャンセル</button>
+        <button onclick="generateDeck()">生成する</button>
+      </div>
     </div>
-    <div class="result" id="result"></div>
-    <div class="toast" id="toast"></div>
+    <div class="form" id="folderAddForm" style="display: none;">
+      <div>
+        <label>フォルダを選択</label>
+        <select id="folderSelect" class="folder-select"></select>
+        <p id="noFolders" class="no-folders" style="display: none;">フォルダがありません</p>
+      </div>
+      <div class="sheet-actions">
+        <button onclick="closeModal()">キャンセル</button>
+        <button id="addToFolderBtn">追加</button>
+      </div>
+    </div>
   </div>
-
-  <script>
-    async function generateDeck() {
-      const topic = document.getElementById('topic').value.trim();
-      const backKind = document.getElementById('backKind').value.trim();
-      const extraKind = document.getElementById('extraKind').value.trim();
-      const difficulty = document.getElementById('difficulty').value.trim();
-      const count = parseInt(document.getElementById('count').value) || 5;
-
-      if (!topic || !count) {
-        showToast('お題と単語数を入力してください');
-        return;
-      }
-
-      try {
-        const res = await fetch('/api/generate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ topic, backKind, extraKind, difficulty, count })
-        });
-        const { cards, error } = await res.json();
-        if (error) throw new Error(error);
-
-        renderCards(cards);
-        showToast('単語帳を生成しました');
-      } catch (e) {
-        console.error('Generate failed:', e);
-        showToast('生成に失敗しました');
-      }
-    }
-
-    function renderCards(cards) {
-      const resultEl = document.getElementById('result');
-      if (!cards || cards.length === 0) {
-        resultEl.innerHTML = '<p>単語がありません</p>';
-        return;
-      }
-
-      let html = `
-        <table>
-          <tr>
-            <th>単語</th>
-            <th>説明</th>
-            <th>補足</th>
-          </tr>
-      `;
-      for (const card of cards) {
-        html += `
-          <tr>
-            <td>${escapeHTML(card.front)}</td>
-            <td>${escapeHTML(card.back)}</td>
-            <td>${escapeHTML(card.extra)}</td>
-          </tr>
-        `;
-      }
-      html += '</table>';
-      resultEl.innerHTML = html;
-    }
-
-    function escapeHTML(s) {
-      return String(s ?? '').replace(/[&<>"']/g, m => ({
-        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', '\'': '&#39;'
-      })[m]);
-    }
-
-    function showToast(msg) {
-      const toast = document.getElementById('toast');
-      toast.textContent = msg;
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 2000);
-    }
-  </script>
+  <script src="/app.js"></script> <!-- 追加 -->
 </body>
 </html>
