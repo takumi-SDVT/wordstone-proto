@@ -2,7 +2,6 @@
   publish = "public"
   functions = "netlify/functions"
 
-# /api/generate → /.netlify/functions/generate へ内部リライト
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
